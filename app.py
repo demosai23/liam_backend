@@ -1,32 +1,32 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
 
-@app.route('/chat', methods=['POST'])
-def chat():
+@app.route('/predict', methods=['POST'])
+def predict():
     data = request.get_json()
-    user_input = data.get('message', '').strip().lower()
 
-    responses = {
-        'hi': 'hello!',
-        'hello': 'hi there!',
-        'how are you': 'I’m just a bot, but I’m doing fine!',
-        'what is your name': 'I’m your friendly Flask bot.',
-        'bye': 'Goodbye! Have a great day!',
-    }
+    # Extract scores
+    math_score = data.get("math score", 0)
+    reading_score = data.get("reading score", 0)
+    writing_score = data.get("writing score", 0)
 
-    # Default fallback if input is unknown
-    default_response = "I'm not sure how to respond to that yet."
+    # Calculate average
+    average = (math_score + reading_score + writing_score) / 3
 
-    # Look for exact match in known responses
-    response = responses.get(user_input, default_response)
+    # Determine pass/fail
+    result = "pass" if average >= 40 else "fail"
 
-    return jsonify({'response': response})
+    return jsonify({"prediction": result})
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+
+
 
     
 
